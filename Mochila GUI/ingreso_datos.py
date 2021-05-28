@@ -31,7 +31,8 @@ class ingreso_datos:
         self.cancelar.grid(column=0,row=2,padx=4,pady=4)
 
         #Boton correr
-        self.ok=Button(self.botones, text="Correr",command=self.generar_ventana_solucion)
+        # self.ok=Button(self.botones, text="Correr",command=self.generar_ventana_solucion)
+        self.ok=Button(self.botones, text="Correr",command=self.get_datos_tabla)
         self.ok.grid(column=5,row=2,padx=4,pady=4)
 
 
@@ -39,7 +40,9 @@ class ingreso_datos:
 
 # Creacion de la funcion que genera la matriz 
     def genera_matriz(self):
+        self.matriz = []
         for r in range(0,self.cant):
+            fila = []
             for c in range(0, 3):
                 celda = Entry(self.matriz_problema, width=8)
                 celda.grid(padx=5, pady=5, row=r, column=c)
@@ -47,6 +50,23 @@ class ingreso_datos:
                 celda.config(fg="white",    # Foreground
                             bg="skyblue3",   # Background
                             font=("Verdana",12))
+                fila.append(celda)
+            self.matriz.append(fila)
+
+    def get_datos_tabla(self):
+        nombres = []
+        pesos = []
+        utilidades = []
+        for fila in self.matriz:
+            nombres.append(fila[0].get())
+            pesos.append(fila[1].get())
+            utilidades.append(fila[2].get())
+
+        print('Nombres: ', nombres)
+        print('Pesos: ', pesos)
+        print('Utilidades: ', utilidades)
+        print('SOLUCION DEL PROBLEMA')
+        self.generar_ventana_solucion()
 
 #Creacion de otras Ventanas
     def cancelar(self):
