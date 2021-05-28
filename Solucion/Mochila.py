@@ -1,4 +1,5 @@
 from Etapa import Etapa
+from copy import deepcopy
 
 class Mochila:
     def __init__(self, capacidad, items):
@@ -42,34 +43,67 @@ class Mochila:
             self.etapas[i].set_item(self.items[i])
         self.items.reverse()
     
+    def generar_tablas(self):
+        for e in self.etapas:
+            e.generar_tabla()
+        
+    def resolver(self):
+        self.generar_tablas()
+        for i in range(len(self.etapas)):
+            if i != 0:
+                self.etapas[i].transicion(self.etapas[i-1].get_fun_max())
+            self.etapas[i].genera_destinos_optimos()
+            
+        soluciones = self.get_conjunto_solucion()
+        self.soluciones = self.normalizar_sol(soluciones)
+                
+    def get_conjunto_solucion(self):
+        self.etapas.reverse()
+        sol = self.etapas[0].get_destino_sol(self.capacidad)
+        conjunto = self.trasponer(sol)
+        for e in self.etapas[1:]:
+            conj = []
+            for camino in conjunto:
+                des = e.get_destino_sol(self.capacidad - sum(camino))
+                # decision = []
+                for d in des:
+                    cam = deepcopy(camino)
+                    cam.append(d)
+                    conj.append(cam)
+                # conj.append(decision[0])
+            conjunto = conj
+        self.etapas.reverse()
+        return conjunto
+    
+    
+    def trasponer(self, sol):
+        aux = []
+        for s in sol:
+            aux.append([s])
+        return aux
+    
+    def normalizar_sol(self, soluciones):
+        for i in range(len(soluciones)):
+            for j in range(len(soluciones[i])):
+                soluciones[i][j] = int(soluciones[i][j] / self.items[j].peso)
+        return soluciones
+                
+            
+    def print_solucion(self):
+        tablas = []
+        for sol in self.soluciones:
+            tabla = [(f'\nSolucion: {self.soluciones.index(sol)+1}'),('Item', 'Cantidad', 'Peso', 'Utilidad')]
+            for indice in range(len(sol)):
+                i = self.items[indice]
+                tabla.append((i.nombre, sol[indice], i.peso*sol[indice], i.beneficio*sol[indice]))
+            tabla.append(('Utilidad total = ', self.etapas[-1].get_fun_max()[0]))
+            tablas.append(tabla)
+        self.tabla_sol = tablas
+        print(self.tabla_sol)
+        
     def print_etapas(self):
         for e in self.etapas:
             print(e)
             
-    def generar_tablas(self):
-        for e in self.etapas:
-            e.generar_tabla()
-            
-    def resolver(self):
-        self.generar_tablas()
-        for i in range(len(self.etapas)):
-            print('destinos: ', self.etapas[i].get_destinos())
-            if i != 0:
-                self.etapas[i].transicion(self.etapas[i-1].get_fun_max())
-            print(self.etapas[i].get_destino_op())
-            
-    def print_solucion(self):
-        self.etapas.reverse()
-        aux = self.capacidad
-        for i in range(len(self.etapas)):
-            if i == 0:
-                des = self.etapas[i].get_destino_sol(aux)
-            else:
-                des = self.etapas[i].get_destino_sol(aux)
-            aux -= des
-            print('destino: ', des)
-        self.etapas.reverse()
-            
-                
     def print_matrices(self):
         print(e.matriz for e in self.etapas)

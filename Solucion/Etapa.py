@@ -49,16 +49,14 @@ class Etapa:
         else:
             self.matriz = np.zeros((dif+1, self.cantidad_columnas()-1))
         
-        self.destino_op = np.zeros(dif+1)
         self.utilidades = self.generar_utilidades()
         
         self.matriz = np.vstack((destinos, self.matriz))
         self.matriz = np.hstack((origenes, self.matriz))
-        self.matriz = self.matriz.astype('int32')
         
         self.inicializar_celdas()
         
-    def get_destinos(self):
+    def get_origenes(self):
         return self.matriz[1:, 0].T
         
     def inicializar_celdas(self):
@@ -81,21 +79,26 @@ class Etapa:
     def get_fun_max(self):
         fun_max = [max(fila) for fila in self.matriz[1:, 1:]]
         fun_max = np.array(fun_max)
-        # print('Funcion max ', fun_max)
         return fun_max
     
-    def get_destino_op(self):
+    def genera_destinos_optimos(self):
         fun_max = self.get_fun_max()
-        # print('fun: ', fun_max)
-        destino_op = []
+        maximos = []
+        destinos_op = []
         i = 0
         for fila in self.matriz[1:, 1:]:
-            # print(fila)
-            # destino_op.append(self.matriz[0, 1])
-            destino_op.append(self.matriz[0, np.where(fila == fun_max[i])[0]+1])
-            i += 1
-        return np.array(destino_op).T[0]
+            maximo = np.where(fila == fun_max[i])[0]
+            maximos.append(maximo)
+            destino = []
+            for m in maximo:
+                destino.append(self.matriz[0, m+1])
+            destinos_op.append(destino)
+            i+=1
+        self.destinos_op = destinos_op
+        
+    def get_destino_op(self):
+        return self.destinos_op
     
     def get_destino_sol(self, prev_residuo):
-        indice = np.where(self.get_destinos() == prev_residuo)[0]
-        return self.get_destino_op()[indice]
+        indice = np.where(self.get_origenes() == prev_residuo)[0]
+        return self.destinos_op[indice[0]]
