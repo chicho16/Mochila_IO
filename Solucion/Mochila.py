@@ -75,12 +75,14 @@ class Mochila:
         self.etapas.reverse()
         return conjunto
     
-    
     def trasponer(self, sol):
         aux = []
         for s in sol:
             aux.append([s])
         return aux
+    
+    def get_utilidad_neta(self):
+        return self.etapas[-1].get_fun_max()[0]
     
     def normalizar_sol(self, soluciones):
         for i in range(len(soluciones)):
@@ -96,7 +98,7 @@ class Mochila:
             for indice in range(len(sol)):
                 i = self.items[indice]
                 tabla.append((i.nombre, sol[indice], i.peso*sol[indice], i.beneficio*sol[indice]))
-            tabla.append(('Utilidad total = ', self.etapas[-1].get_fun_max()[0]))
+            tabla.append(('Utilidad total = ', self.get_utilidad_neta()))
             tablas.append(tabla)
         self.tabla_sol = tablas
         print(self.tabla_sol)
@@ -107,3 +109,27 @@ class Mochila:
             
     def print_matrices(self):
         print(e.matriz for e in self.etapas)
+        
+    def get_formulacion_problema(self):
+        problema = [self.capacidad]
+        for item in self.items:
+            problema.append((item.nombre, item.peso, item.beneficio))
+        return tuple(problema)
+    
+    def get_soluciones(self):
+        soluciones = []
+        for sol in self.soluciones:
+            solucion = []
+            for i in range(len(sol)):
+                solucion.append((self.items[i].nombre, sol[i], self.items[i].peso * sol[i], self.items[i].beneficio * sol [i]))
+            soluciones.append(tuple(solucion))
+        return tuple(soluciones)
+    
+    def get_pesos_sol(self):
+        pesos = []
+        for solucion in self.get_soluciones():
+            peso = 0
+            for fila in solucion:
+                peso += fila[2]
+            pesos.append(peso)
+        return tuple(pesos)

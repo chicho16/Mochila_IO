@@ -62,5 +62,10 @@ def encontrar_problema_sol_multiple():
         if var != '1':
             flag = False
         m.print_solucion()
-    
+    soluciones = ((sol))
+    solucion1 = ((prod, cant, peso, utilidad), (prod, cant, peso, utilidad), (prod, cant, peso, utilidad))
+    for solucion in soluciones:
+        for fila in solucion:
+            fila[0] # producto
+            fila[1] # peso...
 # encontrar_problema_sol_multiple()
