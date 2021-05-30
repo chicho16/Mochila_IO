@@ -1,12 +1,12 @@
 from Item import Item
 from Mochila import Mochila
 from random import randint
-
+from PDF import generarPDF
 # Item(nombre, peso, beneficio)
-items1 = [Item('Aceite', 1, 8),
-        Item('Azucar', 3, 7),
-        Item('Maiz', 2, 7),
-        Item('Frijol', 2, 9)]
+items1 = [Item('Aceite', 2, 8),
+        Item('Azucar', 4, 7),
+        Item('Maiz', 3, 7),
+        Item('Frijol', 5, 9)]
 
 items2 = [Item('Verde', 12, 4),
         Item('Violeta', 1, 2),
@@ -29,10 +29,11 @@ items5 = [Item('Producto 1', 4, 5),
         Item('Producto 2', 4, 5),
         Item('Producto 3', 4, 5)]
 
-mochila = Mochila(18, items5)
+mochila = Mochila(15, items1)
 mochila.crear_etapas()
 mochila.resolver()
 mochila.print_solucion()
+generarPDF("Soluion15.pdf",mochila.get_formulacion_problema(),mochila.get_soluciones())
 
 def encontrar_problema_sol_multiple():
     flag = True
